@@ -1,0 +1,39 @@
+---
+- name: Installation d'apache et remplacement du fichier index par defaut
+  hosts: toto
+  remote_user: root
+  become: yes
+  become_method: su
+  tasks:
+    - name: Verifier que le serveur est a jour
+      apt:
+        update_cache: yes
+        upgrade: full
+
+    - name: Installation d'apache
+      apt: 
+        name: apache2 
+        update_cache: yes
+        state: latest
+     
+    - name: activer mod_rewrite
+      apache2_module:
+        name: rewrite
+        state: present
+
+    - name: Ecrire le fichier index.html
+      template:
+        src: /etc/ansible/files/index.html
+        dest: /var/www/html/index.html
+        #ignore_errors: yes
+
+    - name: activer vhost
+      command: a2ensite test
+      ignore_errors: yes
+    
+    - name: restart server
+      service:
+        name: httpd
+        state: restarted
+        ignore_errors: yes
+ 
