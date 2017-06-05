@@ -44,9 +44,6 @@
 
 ## db-(99:101)-node.example.com
 [toto]
-192.168.52.140
 192.168.52.128
-192.168.52.146
 
 [grp2test]
-anothertest

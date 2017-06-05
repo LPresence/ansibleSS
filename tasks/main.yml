@@ -1,0 +1,7 @@
+---
+- name: main launch file
+  hosts: toto
+  remote_user: root
+- tasks:
+  - include: up_to_date.yml tags=update
+#- include: apache2.yl tags=apache2
