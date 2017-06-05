@@ -1,0 +1,6 @@
+---
+- name: check available update
+  apt:
+    update_cache: yes # > apt-get update
+    upgrade: full # > apt full-upgrade
+

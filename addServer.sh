@@ -1,9 +1,12 @@
 #!/bin/bash
 
-sshKeys='ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCj1lhGhOLf71FuT8ZvioptCFsG69OCp9Uz1e3OpZtz0FH36/avDYeKO4d1aw7r96rvOty+So9njaIXvACrC5kPsnZ7yjiGIM6icV5HfZn1LnaCdYZi0N/m7nKuU4GtHKFSZsIyOfTzQCqxb/yYLUZ3DHgN/8RE9TAp1wReYWGdqqoi4TQY6kPd+IADvDWXybwe13SePEBKk54OQL5qtQDgEGRf8LaXbKb+fbqROPx7N4Q3sm79aSMldsP0hlI52wPUJUZjwSNZoFN2ByVMBoGZjPWVTyGMJOk69IN/tkwIwp3yXho8nac0GQ+clKK+ZGJ7eFvlwHjZJonDNc6I0Lj root@ubuntu
+#set -x
+#trap read debug
+
+sshKeys='ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJE7y7Bir+0CJ/vKB1EngUgRUAOQ8cH8LRsZgbSJ3x0umlyQetJPHj6SM5AMXBEQGK0Z3inDSL8NUjHCL5IA9NwbGW6RIO9NJpDNJtVWln2svLgByZIxUjUCT4GB2qft+FEaX/nqLh+yYV4O1/eWUQj2soVLuRVlHbZ9tnX+c5VFb7Q5iRR55OxpOGMM9qoAJUfYFQ/Vp0Q4agfJF6xuwEg6cA5P1EXTNGdd+hz8h0sAXbsXpPaxVdIcNWgOrt1NwVEVSn0mTuXq4efwuCMP2fFd0gsw3Krc5uJMAy2d6QEAZmDl+NAIMkV0m43ip861eVfl7g5dncTNd1Ph7Vz53N root@ubuntu
 '
 ansibleHostsPathMac='/opt/local/etc/ansible/hosts'
-ansibleHostsPathLinux='/lansible/hosts'
+ansibleHostsPathLinux='/etc/ansible/hosts'
 
 read -p 'server ip: ' serverIp
 read -p 'ssh config server name: ' serverName
@@ -18,7 +21,7 @@ select yn in "Yes" "No"; do
       echo [$serverGroup] >> hosts; break;;
     No )
       read -p 'Ansible group for this server: ' serverGroup
-      exit
+      break
   esac
 done
 
