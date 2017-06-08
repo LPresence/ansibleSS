@@ -1,7 +1,7 @@
 ---
 - name: install apache2
-  hosts: grp2test
-  remote_user: ansible
+  hosts: 192.168.52.128
+  remote_user: root
   become: yes
   become_method: su
   tasks:
