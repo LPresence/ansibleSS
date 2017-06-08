@@ -2,8 +2,8 @@
 - name: install apache2
   hosts: 192.168.52.128
   remote_user: ansible
-  #become: yes
-  #become_method: su
+  become: yes
+  become_method: su
   tasks:
     - name: ensure servers are up to date
       apt:
