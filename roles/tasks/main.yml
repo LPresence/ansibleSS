@@ -1,7 +1,7 @@
 ---
 - name: main launch file
   hosts: toto
-  remote_user: root
+  remote_user: ansible
 
   tasks:
 
