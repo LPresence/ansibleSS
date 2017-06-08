@@ -1,6 +1,6 @@
 ---
 - name: install apache2
-  hosts: 192.168.52.128
+  hosts: debian8
   remote_user: root
   become: yes
   become_method: su
