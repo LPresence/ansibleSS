@@ -1,0 +1,16 @@
+---
+- name: main launch file
+  hosts: grp2test
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+
+  tasks:
+
+  - include: roles/tasks/up_to_date.yml
+  - include: roles/tasks/apache2.yml
+  - include: roles/tasks/apache2_conf.yml
+
+  handlers:
+
+  - include: roles/handlers/restart_apache2.yml
