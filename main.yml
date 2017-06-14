@@ -1,6 +1,6 @@
 ---
 - name: main launch file
-  hosts: grp2test
+  hosts: mymachines
   remote_user: ansible
   become: yes
   become_method: sudo
