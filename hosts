@@ -4,3 +4,5 @@ debian8_1
 
 [grp2test]
 192.168.52.128
+[mymachines]
+192.168.161.130
