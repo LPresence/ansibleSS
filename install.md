@@ -59,6 +59,7 @@ visudo
 ansible ALL=(ALL) NOPASSWD: ALL
 
 Sur la machine principale :
+
 • Vous pouvez verifier le contact par :
 
 ansible all -m ping	
@@ -77,9 +78,9 @@ apt-get install mariadb-server git -y
 • Ensuite créez un utilisateur admin qui remplacera l’utilisateur root (qui demande maintenant une auth par plugin et non plus par mot de passe sur Ubuntu …) :
 
 mysql -uroot
-> CREATE USER 'admin'@'localhost' IDENTIFIED BY 'password'; (‘admin’ est une variable)
-> GRANT ALL PRIVILEGES ON *.* TO 'admin'@'localhost';
-> FLUSH PRIVILEGES;
+> CREATE USER 'admin'@'localhost' IDENTIFIED BY 'password'; (‘admin’ est une variable)                                 
+> GRANT ALL PRIVILEGES ON *.* TO 'admin'@'localhost';                                                              
+> FLUSH PRIVILEGES;                                                                                             
 
 • Ensuite, on télécharge Semaphore et on lance l’installateur :
 
