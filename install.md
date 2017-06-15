@@ -89,11 +89,11 @@ chmod +x /usr/bin/semaphore
 semaphore -setup
 
 • Remplissez correctement comme indiqué ci-dessous :
-> DB Hostname (default 127.0.0.1:3306): <- Enter
-> DB User (default root): admin  <- comme indiqué a l’initialisation de mysql
-> DB Password: password  <- Mot de passe MariaDB
-> DB Name (default semaphore):   <- Enter
-> Playbook path: /home/ansible/ <- Répertoire home de l’utilisateur Ansible
+> DB Hostname (default 127.0.0.1:3306): <- Enter                                                                  
+> DB User (default root): admin  <- comme indiqué a l’initialisation de mysql                                 
+> DB Password: password  <- Mot de passe MariaDB                                                                  
+> DB Name (default semaphore):   <- Enter                                                                                                   
+> Playbook path: /home/ansible/ <- Répertoire home de l’utilisateur Ansible                                                                  
 
 • Ensuite remplissez les champs pour créer le compte principal de Semaphore.
 • Lancez la commande suivante pour lancer Semaphore :
