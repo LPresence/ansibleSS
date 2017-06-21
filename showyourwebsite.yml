@@ -1,0 +1,34 @@
+---
+- name: Install IIS web server and a Web Site
+  hosts: windows
+  remote_user: ansible
+  tasks:
+    - name: install IIS and management tools
+      win_feature:
+        name: Web-Server
+        state: present
+        include_management_tools: True
+        restart: no 
+    - name: remove Default Web Site
+      win_iis_website:
+        name: Default Web Site
+        state: absent
+    - name: create directory hola
+      win_file:
+        path: C:\inetpub\hola
+        state: directory
+    - name: send index.html file
+      win_copy:
+        src: /etc/ansible/roles/common/files/index.html
+        dest: C:\inetpub\hola\ 
+    - name: create directory logs
+      win_file:
+        path: C:\inetpub\hola\logs
+        state: directory
+    - name: setup web site hola
+      win_iis_website:
+        name: Hola
+        state: started
+        port: 8080
+        physical_path: C:\inetpub\hola
+        parameters: logfile.directory:C:\inetpub\hola\logs
