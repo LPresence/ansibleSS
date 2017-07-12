@@ -21,11 +21,11 @@
           mode: 0755
       - name: send java jdk
         copy:
-          src: /etc/ansible/roles/files/jdk.tar.gz
+          src: /etc/ansible/roles/files/jdk-7u80-linux-x64.tar.gz
           dest: /usr/java
       - name: unarchive
         unarchive:
-          src: /usr/java/jdk.tar.gz
+          src: /usr/java/jdk-7u80-linux-x64.tar.gz
           dest: /usr/java
           remote_src: True
       - name: give JAVA_HOME to jboss
