@@ -39,4 +39,4 @@
       - name: build it
         shell: '/home/ansible/jboss-as/build.sh -Dmaven.test.skip=true'
       - name: tipar
-        shell: '/home/kalus/jboss-as/build/target/jboss-as-7.1.3.Final/bin/domain.sh'
+        shell: '/home/kalus/jboss-as/build/target/jboss-as-7.1.3.Final/bin/standalone.sh'
