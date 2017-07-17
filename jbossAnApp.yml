@@ -1,0 +1,13 @@
+---
+- name: Deploy a jboss as app on an already configured host
+  hosts: centos
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: helloworld
+      jboss:
+        src: /home/kalus/Téléchargements/HellowWorld/helloworld.war
+        deploy_path: /home/kalus/jbosss-as/build/target/jboss-as-7.1.3.Final/st$
+        deployment: hello.war
+        state: present
