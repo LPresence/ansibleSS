@@ -1,0 +1,42 @@
+---
+- name: Install and configure jboss-as on centOS
+  hosts: centos
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: send jboss-as.zip
+      copy:
+        src: /etc/ansible/roles/files/jboss-as.zip
+        dest: /home/ansible/
+     - name: unzip it
+       unzip:
+         src: /home/ansible/jboss-as.zip
+         dest: /home/ansible
+         remote_src: True
+     - name: create directory
+        file:
+          path: /usr/java
+          state: directory
+          mode: 0755
+      - name: send java jdk
+        copy:
+          src: /etc/ansible/roles/files/jdk-7u80-linux-x64.tar.gz
+          dest: /usr/java
+      - name: unarchive
+        unarchive:
+          src: /usr/java/jdk-7u80-linux-x64.tar.gz
+          dest: /usr/java
+          remote_src: True
+      - name: give JAVA_HOME to jboss
+        blockinfile:
+          dest: /home/ansible/jboss-as/build.sh
+          block: |
+            JAVA_HOME=/usr/java/jdk.1.7.0_80
+            export JAVA_HOME
+            PATH=$PATH:$JAVA_HOME
+            export PATH
+      - name: build it
+        shell: '/home/ansible/jboss-as/build.sh -Dmaven.test.skip=true'
+      - name: tipar
+shell: '/home/kalus/jboss-as/build/target/jboss-as-7.1.3.Final/bin/standalone.sh'
