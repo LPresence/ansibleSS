@@ -45,9 +45,9 @@
         path: "{{ location }}/jboss-as-7.1.3.Final"
       register: p
 
-  #  - name: rename directory jboss-as
-   #   shell: 'mv "{{ location }}/jboss-as-7.1.3.Final" "{{ location }}/jboss-as"'
-    #  when: p.stat.exists == True
+    - name: rename directory jboss-as
+      shell: 'mv "{{ location }}/jboss-as-7.1.3.Final" "{{ location }}/jboss-as"'
+      when: p.stat.exists == True
       
     - name:  create group jboss on Centos
       group:
@@ -135,4 +135,4 @@
       with_items:
         - systemctl daemon-reload
         - systemctl enable jboss.service    
-       # - systemctl start jboss.service
+        - systemctl start jboss.service
