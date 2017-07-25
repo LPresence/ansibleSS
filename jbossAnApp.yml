@@ -1,13 +1,27 @@
 ---
-- name: Deploy a jboss as app on an already configured host
+- name: deploy an app on jboss-as
   hosts: centos
   remote_user: ansible
   become: yes
   become_method: sudo
+  vars_prompt:
+    - name: "location"
+      prompt: "Indiquez le répertoire qui héberge le dossier jboss-as"
+      private: no
+   
+    - name: "deployment"
+      prompt: "Indiquez le nom du deploiement souhaité"
+      private: no
+
   tasks:
-    - name: helloworld
+    - name: sending the app
+      unarchive:
+        src: /etc/ansible/roles/files/HellowWorld.zip
+        dest: "{{ location }}"
+        
+    - name: setup 
       jboss:
-        src: /home/kalus/Téléchargements/HellowWorld/helloworld.war
-        deploy_path: /home/kalus/jbosss-as/build/target/jboss-as-7.1.3.Final/st$
-        deployment: hello.war
+        src: "{{ location }}/HellowWorld/helloworld.war"
+        deploy_path: "{{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/standalone/deployments"
+        deployment: "{{ deployment }}.war"
         state: present
