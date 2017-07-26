@@ -11,15 +11,15 @@
       prompt: "Ou voulez vous installer Jboss AS ? un dossier jboss-as sera cree"
       private: no
 
-    - name: "httpport"
+    - name: "http_port"
       prompt: "Indiquez le port découte http pour cette installation"
       private: no
 
-    - name: "httpsport"
+    - name: "https_port"
       prompt: "Indiquez le port découte https pour cette installation"
       private: no
 
-    - name: "managementport"
+    - name: "management_port"
       prompt: "Indiquez le port de l'interface de management pour cette installation"
       private: no
 
