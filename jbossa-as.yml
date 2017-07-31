@@ -43,11 +43,16 @@
     - name: check jboss as directory name
       stat:
         path: "{{ location }}/jboss-as-7.1.3.Final"
-      register: p
+      register: ln
+
+    - name: check jboss as directory exist
+      stat:
+        path: "{{ location }}/jboss-as"
+      register: sn
 
     - name: rename directory jboss-as
       shell: 'mv "{{ location }}/jboss-as-7.1.3.Final" "{{ location }}/jboss-as"'
-      when: p.stat.exists == True
+      when: ln.stat.exists == True and sn.stat.exists == False
       
     - name:  create group jboss on Centos
       group:
@@ -103,7 +108,7 @@
     - name: set https port
       lineinfile:
         path="{{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/standalone/configuration/standalone.xml"
-        regexp='<socket-binding name="https" '
+        regexp='<socket-binding name="https" '    
         line='        <socket-binding name="https" port="{{ https_port }}"/>'
 
     - name: set http management port
@@ -112,27 +117,32 @@
         regexp='<socket-binding name="management-http" interface="management" '
         line='        <socket-binding name="management-http" interface="management" port="${jboss.management.http.port:{{ management_port }}}"/>'
 
-    - name: create a systemctl service
-      blockinfile:
-        dest: /etc/systemd/system/jboss.service
-        create: yes
-        block: |
-          [Unit]
-          Description=Jboss Application Server
+    - name: copy init.d file
+      copy:
+        src: "{{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/bin/init.d/jboss-as-standalone.sh"
+        dest: /etc/init.d/jboss-as1
+        remote_src: true
+        mode: 0755
 
-          [Service]
-          Type=forking
-          User=jboss
-          ExecStart="{{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/bin/standalone.sh"
-          RemainAfterExit=True
-          KillMode=process
-
-          [Install]
-          WantedBy=multi-user.target
-
-    - name: manage service jboss
-      shell: "{{ item }}"
+    - name: setup env
+      lineinfile:
+        path: /etc/init.d/jboss-as1
+        regexp: "{{ item.line_to_match }}"
+        line: "{{ item.line_to_configure }}"
       with_items:
-        - systemctl daemon-reload
-        - systemctl enable jboss.service    
-        - systemctl start jboss.service
+        - { line_to_match: "JBOSS_HOME=", line_to_configure: "JBOSS_HOME={{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/" }
+        - { line_to_match: "JBOSS_CONSOLE_LOG=", line_to_configure: "JBOSS_CONSOLE_LOG={{ location }}/jboss-as/console.log" }
+        - { line_to_match: "STARTUP_WAIT=", line_to_configure: "STARTUP_WAIT=4" }
+       # - { line_to_match: "", line_to_configure: " " }
+   
+    - name: add jboss user name
+      lineinfile:
+        path: /etc/init.d/jboss-as1    
+        insertbefore: 'JBOSS_SCRIPT='
+        line: 'JBOSS_USER=jboss'
+
+    - name: enable and start jboss-as service
+      service:
+        name: jboss-as1
+        state: started
+        enabled: yes
