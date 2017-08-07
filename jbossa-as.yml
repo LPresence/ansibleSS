@@ -8,20 +8,72 @@
 
   vars_prompt:
     - name: "location"
-      prompt: "Ou voulez vous installer Jboss AS ? un dossier jboss-as sera cree"
+      prompt: "Dans quel répertoire souhaitez-vous installer Jboss AS ? un dossier sera ensuite cree"
       private: no
 
-    - name: "http_port"
-      prompt: "Indiquez le port découte http pour cette installation"
+    - name: "dir_name"
+      prompt: "Comment souhaitez-vous nommer le dossier JBOSS ? (par défaut: jboss-as)"
       private: no
+      default: jboss-as
+ 
+    - name: "java_home"
+      prompt: "Dans quel repertoire souhaitez-vous installer java jdk 1.7 ?"
+      private: no
+
+    - name: "xmx"
+      prompt: "Quelle quantité de mémoire souhaitez vous allouer a la jvm ?"
+      private: no
+      
+    - name: "http_port"
+      prompt: "Indiquez le port d écoute http pour cette installation (defaut: 8080)"
+      private: no
+      default: 8080
 
     - name: "https_port"
-      prompt: "Indiquez le port découte https pour cette installation"
+      prompt: "Indiquez le port d écoute https pour cette installation (defaut: 8443)"
       private: no
+      default: 8443
 
     - name: "management_port"
-      prompt: "Indiquez le port de l'interface de management pour cette installation"
+      prompt: "Indiquez le port de l'interface de management http pour cette installation (defaut: 9990)"
       private: no
+      default: 9990
+
+    - name: "native_mgm_port"
+      prompt: "Indiquez le port de management natif (defaut: 9999)"
+      private: no
+      default: 9999
+ 
+    - name: "remote_port"
+      prompt: "Indiquez le port de remoting (defaut: 4447)"
+      private: no
+      default: 4447
+
+    - name: "jboss_user"
+      prompt: "Indiquez le nom de l'utilisateur jboss (chargé d'executer jboss, par defaut: jboss) ?"
+      private: no
+      default: jboss
+
+    - name: "jboss_passwd"
+      prompt: "Jboss user password ?"
+      private: yes
+
+   - name: "address" 
+     prompt: "Indiquez l'adresse écoutée par le controleur local (si besoin, par defaut: 127.0.0.1)"
+     private: no
+     default: 127.0.0.1
+
+   - name: "start_delay"
+     prompt: "Précisez le delai en secondes pour le démarrage de boss (par defaut: 1)"
+     private: no
+     default: 1
+
+   - name: "stop_delay"
+     prompt: "Précisez le delai en secondes pour l'extinction de jboss (par defaut: 1)"
+     private: no
+     default: 1
+
+
 
   tasks:
     - name: send jboss-as
@@ -31,14 +83,14 @@
 
     - name: create directory Java (/usr/java)
       file:
-        path: /usr/java
+        path: "{{ java_home }}/java"
         state: directory
         mode: 0755
 
     - name: unarchive jdk
       unarchive:
         src: /etc/ansible/roles/files/jdk-7u80-linux-x64.tar.gz
-        dest: /usr/java
+        dest: "{{ java_home }}/java"
 
     - name: check jboss as directory name
       stat:
@@ -47,11 +99,11 @@
 
     - name: check jboss as directory exist
       stat:
-        path: "{{ location }}/jboss-as"
+        path: "{{ location }}/{{ dir_name }}"
       register: sn
 
     - name: rename directory jboss-as
-      shell: 'mv "{{ location }}/jboss-as-7.1.3.Final" "{{ location }}/jboss-as"'
+      shell: 'mv "{{ location }}/jboss-as-7.1.3.Final" "{{ location }}/{{ dir_name }}"'
       when: ln.stat.exists == True and sn.stat.exists == False
       
     - name:  create group jboss on Centos
@@ -62,29 +114,29 @@
       user:
         name: jboss
         group: jboss
-        home: "{{ location }}/jboss-as"
+        home: "{{ location }}/{{ dir_name }}"
 
     - name: give JAVA_HOME to jboss build script
       blockinfile:
-        dest: "{{ location }}/jboss-as/build.sh"
+        dest: "{{ location }}/{{ dir_name }}/build.sh"
         insertafter: "#!/bin/sh" 
-        content: "JAVA_HOME=/usr/java/jdk1.7.0_80 \n
+        content: "JAVA_HOME={{ java_home }}/java/jdk1.7.0_80 \n
           export JAVA_HOME \n 
           PATH=$PATH:$JAVA_HOME \n
           export PATH \n"
 
-    - name: increase memory limit for build (1280Mio)
+    - name: increase memory limit for build (1280Mo required)
       lineinfile:
-        path="{{ location }}/jboss-as/build.sh"
+        path="{{ location }}/{{ dir_name }}/build.sh"
         regexp='^MAVEN_OPTS='
-        line='MAVEN_OPTS="$MAVEN_OPTS -Xmx1280M"'
+        line='MAVEN_OPTS="$MAVEN_OPTS -Xms1280M -Xmx1280M"'
 
     - name: build it (may take a long time, about 30 min)
-      shell: '"{{ location }}/jboss-as/build.sh" -Dmaven.test.skip=true'
+      shell: '"{{ location }}/{{ dir_name }}/build.sh" -Dmaven.test.skip=true'
     
     - name: change ownership of jboss-as
       file:
-        path: "{{ location }}/jboss-as"
+        path: "{{ location }}/{{ dir_name }}"
         owner: jboss
         group: jboss
         state: directory
@@ -92,34 +144,53 @@
 
     - name: give JAVA_HOME to the standalone script
       blockinfile:
-        dest: "{{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/bin/standalone.sh"
+        dest: "{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/bin/standalone.sh"
         insertafter: "#!/bin/sh"
-        content: "JAVA_HOME=/usr/java/jdk1.7.0_80 \n
+        content: "JAVA_HOME={{ java_home }}/java/jdk1.7.0_80 \n
           export JAVA_HOME \n
           PATH=$PATH:$JAVA_HOME \n
           export PATH \n"
 
     - name: set http port
       lineinfile:
-        path="{{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/standalone/configuration/standalone.xml"
+        path="{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/standalone/configuration/standalone.xml"
         regexp='<socket-binding name="http" '
         line='        <socket-binding name="http" port="{{ http_port }}"/>'
 
     - name: set https port
       lineinfile:
-        path="{{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/standalone/configuration/standalone.xml"
+        path="{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/standalone/configuration/standalone.xml"
         regexp='<socket-binding name="https" '    
         line='        <socket-binding name="https" port="{{ https_port }}"/>'
 
     - name: set http management port
       lineinfile:
-        path="{{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/standalone/configuration/standalone.xml"
+        path="{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/standalone/configuration/standalone.xml"
         regexp='<socket-binding name="management-http" interface="management" '
         line='        <socket-binding name="management-http" interface="management" port="${jboss.management.http.port:{{ management_port }}}"/>'
 
+    - name: set address
+      replace:
+        dest="{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/standalone/configuration/standalone.xml"
+        regexp="127.0.0.1"
+        replace="{{ address }}"
+
+    - name: set remoting port
+      lineinfile:
+        path="{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/standalone/configuration/standalone.xml"
+        regexp='<socket-binding name="remoting" '
+        line='        <socket-binding name="remoting" port="{{ remote_port }}"/>'
+
+    - name: set native port
+      lineinfile:
+        path="{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/standalone/configuration/standalone.xml"
+        regexp='<socket-binding name="management-native" interface="management" '
+        line='        <socket-binding name="management-native" interface="management" port="${jboss.management.native.port:{{ native_mgm_port }}}"/>
+'
+
     - name: copy init.d file
       copy:
-        src: "{{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/bin/init.d/jboss-as-standalone.sh"
+        src: "{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/bin/init.d/jboss-as-standalone.sh"
         dest: /etc/init.d/jboss-as1
         remote_src: true
         mode: 0755
@@ -130,10 +201,12 @@
         regexp: "{{ item.line_to_match }}"
         line: "{{ item.line_to_configure }}"
       with_items:
-        - { line_to_match: "JBOSS_HOME=", line_to_configure: "JBOSS_HOME={{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/" }
-        - { line_to_match: "JBOSS_CONSOLE_LOG=", line_to_configure: "JBOSS_CONSOLE_LOG={{ location }}/jboss-as/console.log" }
-        - { line_to_match: "STARTUP_WAIT=", line_to_configure: "STARTUP_WAIT=4" }
-       # - { line_to_match: "", line_to_configure: " " }
+        - { line_to_match: "JBOSS_HOME=", line_to_configure: "JBOSS_HOME={{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/" }
+        - { line_to_match: "JBOSS_CONSOLE_LOG=", line_to_configure: "JBOSS_CONSOLE_LOG={{ location }}/{{ dir_name }}/console.log" }
+        - { line_to_match: "STARTUP_WAIT=", line_to_configure: "STARTUP_WAIT={{ start_delay }}" }
+        - { line_to_match: "STARTUP_STOP=", line_to_configure: "STARTUP_STOP={{ stop_delay }}" }
+        
+       # - { line_to_match: "", line_to_configure: " " 
    
     - name: add jboss user name
       lineinfile:
@@ -146,3 +219,5 @@
         name: jboss-as1
         state: started
         enabled: yes
+
+    - include: jboss_mng_usr.yml 
