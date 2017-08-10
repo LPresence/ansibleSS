@@ -1,0 +1,51 @@
+---
+- name: create java encryption file
+  blockinfile:
+    dest: "{{ location }}/{{ dir_name }}/EncryptPassword.java"
+    create: yes
+    mode: 0755
+    marker: "/* {mark} ANSIBLE MANAGED BLOCK */"
+    block: |
+      import java.security.MessageDigest;
+      import java.math.BigInteger;
+      import org.jboss.crypto.CryptoUtil;
+
+      public class EncryptPassword
+        {
+          public static void main(String ar[]) throws Exception
+           {
+             String userName=ar[0];
+             String realmName=ar[1];
+             String password=ar[2];
+
+             String clearTextPassword=userName+":"+realmName+":"+password;
+
+             String hashedPassword=CryptoUtil.createPasswordHash("MD5", "hex", null, null, clearTextPassword);
+             System.out.println(hashedPassword);
+           }
+        }
+
+- name: javac EncryptPassword
+  shell: 'echo $CLASSPATH; "{{ java_home }}/java/jdk1.7.0_80/bin/javac" EncryptPassword.java'
+  args:
+    chdir: "{{ location }}/{{ dir_name }}/"
+  environment:
+    JBOSS_HOME: '{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/'
+    CLASSPATH: '{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/modules/org/picketbox/main/picketbox-4.0.13.Final.jar:{{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/bin/client/jboss-client.jar:$CLASSPATH:.:'
+- name: add jboss user name
+  shell: 'java EncryptPassword {{ jboss_mgmt_user }} ManagementRealm  {{ jboss_passwd }}'
+  args:
+    chdir: "{{ location }}/{{ dir_name }}"
+  environment:
+    JBOSS_HOME: '{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/'
+    CLASSPATH: '{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/modules/org/picketbox/main/picketbox-4.0.13.Final.jar:{{ location }}/jboss-as/build/target/jboss-as-7.1.3.Final/bin/client/jboss-client.jar:$CLASSPATH:.:'
+  register: hashed
+  
+- set_fact:
+    hashed_passwd: "{{ hashed.stdout }}"
+
+- name: store passwd in right file
+  lineinfile:
+    dest: '{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/standalone/configuration/mgmt-users.properties'
+    state: present
+    line: '{{ jboss_mgmt_user  }}={{ hashed_passwd }}'
