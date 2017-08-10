@@ -1,6 +1,6 @@
 ---
 - name: Install and configure jboss-as on centOS
-  hosts: centos
+  hosts: centos 
   remote_user: ansible
   become: yes
   become_method: sudo
@@ -54,26 +54,29 @@
       private: no
       default: jboss
 
+    - name: "jboss_mgmt_user"
+      prompt: "Indiquez le nom de l'utilisateur dédié a la console de management web (par defaut: admin)"
+      private: no
+      default: admin
+
     - name: "jboss_passwd"
       prompt: "Jboss user password ?"
       private: yes
 
-   - name: "address" 
-     prompt: "Indiquez l'adresse écoutée par le controleur local (si besoin, par defaut: 127.0.0.1)"
-     private: no
-     default: 127.0.0.1
+    - name: "address" 
+      prompt: "Indiquez l'adresse écoutée par le controleur local (si besoin, par defaut: 127.0.0.1)"
+      private: no
+      default: 127.0.0.1
 
-   - name: "start_delay"
-     prompt: "Précisez le delai en secondes pour le démarrage de boss (par defaut: 1)"
-     private: no
-     default: 1
+    - name: "start_delay"
+      prompt: "Précisez le delai en secondes pour le démarrage de boss (par defaut: 1)"
+      private: no
+      default: 1
 
-   - name: "stop_delay"
-     prompt: "Précisez le delai en secondes pour l'extinction de jboss (par defaut: 1)"
-     private: no
-     default: 1
-
-
+    - name: "stop_delay"
+      prompt: "Précisez le delai en secondes pour l'extinction de jboss (par defaut: 1)"
+      private: no
+      default: 1
 
   tasks:
     - name: send jboss-as
@@ -185,19 +188,18 @@
       lineinfile:
         path="{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/standalone/configuration/standalone.xml"
         regexp='<socket-binding name="management-native" interface="management" '
-        line='        <socket-binding name="management-native" interface="management" port="${jboss.management.native.port:{{ native_mgm_port }}}"/>
-'
+        line='        <socket-binding name="management-native" interface="management" port="${jboss.management.native.port:{{ native_mgm_port }}}"/>'
 
     - name: copy init.d file
       copy:
         src: "{{ location }}/{{ dir_name }}/build/target/jboss-as-7.1.3.Final/bin/init.d/jboss-as-standalone.sh"
-        dest: /etc/init.d/jboss-as1
+        dest: /etc/init.d/jboss
         remote_src: true
         mode: 0755
 
     - name: setup env
       lineinfile:
-        path: /etc/init.d/jboss-as1
+        path: /etc/init.d/jboss
         regexp: "{{ item.line_to_match }}"
         line: "{{ item.line_to_configure }}"
       with_items:
@@ -206,17 +208,17 @@
         - { line_to_match: "STARTUP_WAIT=", line_to_configure: "STARTUP_WAIT={{ start_delay }}" }
         - { line_to_match: "STARTUP_STOP=", line_to_configure: "STARTUP_STOP={{ stop_delay }}" }
         
-       # - { line_to_match: "", line_to_configure: " " 
+       # - { line_to_match: "", line_to_configure: " " } 
    
     - name: add jboss user name
       lineinfile:
-        path: /etc/init.d/jboss-as1    
+        dest: /etc/init.d/jboss   
         insertbefore: 'JBOSS_SCRIPT='
         line: 'JBOSS_USER=jboss'
 
     - name: enable and start jboss-as service
       service:
-        name: jboss-as1
+        name: jboss
         state: started
         enabled: yes
 
