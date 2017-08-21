@@ -1,20 +1,29 @@
 ---
+#installation d'un démon zabbix sur des machines windows
 - name : install zabbix
   hosts: windows
   remote_user: ansible
   tasks:
+    #envoi de l'agent zabbix exe 
     - name: push zabbix
       win_copy:
         src: /etc/ansible/roles/common/files/Zabbix_agent/Files/win64/zabbix_agentd.exe
         dest: C:\zabbix_agentd.exe
+        
+     #envoi de la configuration de cet agent
     - name: push zabbix conf
       win_copy:
         src: /etc/ansible/roles/common/files/Zabbix_agent/Files/zabbix_agentd.conf  
         dest: C:\zabbix_agentd.conf
+        
+     #désisntalation d'un potentiel agent déja présent
     - name: desisntalation
       raw: 'C:\\zabbix_agentd.exe  --uninstall'
       ignore_errors: yes
+      
+      #installation de l'agent avec sa configuration
     - name: zabbix_agentd.exe
       raw: 'C:\\zabbix_agentd.exe --config C:\\zabbix_agentd.conf --install'
+      
     - name: start agent
       raw: 'C:\\zabbix_agentd.exe --start'
