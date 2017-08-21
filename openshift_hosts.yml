@@ -1,0 +1,33 @@
+# Create an OSEv3 group that contains the masters and nodes groups
+[OSEv3:children]
+masters
+nodes
+etcd
+# Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+ansible_user=ansible
+ansible_become=true
+
+openshift_master_default_subdomain=atomic-registry
+
+openshift_deployment_type=origin
+openshift_release=v1.4.1
+deployment_subtype=registry
+containerized=true
+openshift_disable_check=disk_availability,memory_availability
+# enable htpasswd auth
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_master_htpasswd_users={'admin': '$apr1$zgSjCrLt$1KSuj66CggeWSv.D.BXOA1', 'user': '$apr1$.gw8w9i1$ln9bfTRiD6OwuNTG5LvW50'}
+
+# host group for masters
+[masters]
+10.12.10.232
+
+[etcd]
+10.12.10.232
+# host group for worker nodes, we list master node here so that
+# openshift-sdn gets installed. We mark the master node as not
+# schedulable.
+[nodes]
+10.12.10.232 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" openshift_schedulable=true
+~                                                                                                         
