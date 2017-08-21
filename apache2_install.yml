@@ -1,0 +1,37 @@
+---
+#installation d'apache 2
+- name: install apache2
+  hosts: grp2test #host group
+  remote_user: ansible #user
+  become: yes #becom admin
+  become_method: sudo #using sudo
+  #become_user: root #else you can become root 
+  tasks:
+    #apt update && apt upgrade
+    - name: ensure servers are up to date
+      apt:
+        update_cache: yes
+        upgrade: full
+ 
+    #apt install apache2
+    - name: install apache2
+      apt: 
+        name=apache2 
+        update_cache=yes 
+        state=latest
+   
+    #module rewrite activated
+    - name: enable mod_rewrite
+      apache2_module: 
+        name=rewrite 
+        state=present
+      notify:
+        - restart apache2
+    
+ 
+  handlers:
+    #service restart apache2
+    - name: restart apache2
+      service: 
+        name=apache2 
+        state=restarted
