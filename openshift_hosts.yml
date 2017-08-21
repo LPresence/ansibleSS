@@ -30,4 +30,3 @@ openshift_master_htpasswd_users={'admin': '$apr1$zgSjCrLt$1KSuj66CggeWSv.D.BXOA1
 # schedulable.
 [nodes]
 10.12.10.232 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" openshift_schedulable=true
-~                                                                                                         
