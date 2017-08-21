@@ -1,4 +1,5 @@
 ---
+#utilisation du module jboss pour déployer une application 
 - name: deploy an app on jboss-as
   hosts: centos
   remote_user: ansible
