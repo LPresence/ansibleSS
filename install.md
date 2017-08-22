@@ -4,9 +4,9 @@ Sur la machine « principale », celle qui va instruire les autres :
                                                                                                                                                  
 • Dans un premier temps, on va ajouter le dépôt de Ansible pour récupérer les paquets à jour :                                                                                                
                                                                                                                                                 
-$ apt-get install software-properties-common                                                                                                
-$ apt-add-repository ppa:ansible/ansible                                                                                                
-$ apt-get update                                                                                                                                                
+>$ apt-get install software-properties-common                                                                                                
+>$ apt-add-repository ppa:ansible/ansible                                                                                                
+>$ apt-get update                                                                                                                                                
                                                                                                                                                 
                                                                                                                                     
 • Ensuite, vous pourrez installer Ansible avec la commande suivante (il est aussi possible de l’installer via le Github                                                officiel) :
