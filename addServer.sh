@@ -2,8 +2,7 @@
 #script permettant l'ajout et la configuration rapide et simple de machines distantes pour ansible
 
 #veuillez changer cette clé par votre clé id_rsa.pub personelle
-sshKeys='ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJE7y7Bir+0CJ/vKB1EngUgRUAOQ8cH8LRsZgbSJ3x0umlyQetJPHj6SM5AMXBEQGK0Z3inDSL8NUjHCL5IA9NwbGW6RIO9NJpDNJtVWln2svLgByZIxUjUCT4GB2qft+FEaX/nqLh+yYV4O1/eWUQj2soVLuRVlHbZ9tnX+c5VFb7Q5iRR55OxpOGMM9qoAJUfYFQ/Vp0Q4agfJF6xuwEg6cA5P1EXTNGdd+hz8h0sAXbsXpPaxVdIcNWgOrt1NwVEVSn0mTuXq4efwuCMP2fFd0gsw3Krc5uJMAy2d6QEAZmDl+NAIMkV0m43ip861eVfl7g5dncTNd1Ph7Vz53N root@ubuntu
-'
+sshKeys='ssh-rsa XXX user@ubuntu'
 ansibleHostsPathMac='/opt/local/etc/ansible/hosts'
 ansibleHostsPathLinux='/etc/ansible/hosts'
 
@@ -25,8 +24,8 @@ select yn in "Yes" "No"; do
 done
 
 # config ssh & login for automatic connection via ssh key
-ssh root@$serverIp /bin/bash <<ENDSSH
-    # add our ssh keys to root user's authorized_keys
+ssh ansible@$serverIp /bin/bash <<ENDSSH
+    # add our ssh keys to ansible user's authorized_keys
     cd /ansible
     mkdir -p .ssh
     echo "$sshKeys" >> .ssh/authorized_keys
