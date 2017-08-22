@@ -1,7 +1,7 @@
 INSTALLATION D’ANSIBLE sur distribution Ubuntu 16.04
 
 Sur la machine « principale », celle qui va instruire les autres :
-
+ 
 • Dans un premier temps, on va ajouter le dépôt de Ansible pour récupérer les paquets à jour :
 
 $ apt-get install software-properties-common
