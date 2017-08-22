@@ -1,6 +1,6 @@
 # ansibleSS
 Sopra Steria                                                                                                                               
-Durant mon stage chez Sopra Steria j'éssaie de maitriser ansible                                                           
+Durant mon stage chez Sopra Steria j'apprend à maitriser ansible                                                           
 Suivez mon aventure ici http://stage.lukaspresencia.fr
 
 -------------------------------------------------------------------------------------------------------------------------------------------
