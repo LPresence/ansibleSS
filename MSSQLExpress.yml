@@ -1,0 +1,42 @@
+---
+- name: install MS SQL Express
+  hosts: windows
+  remote_user: ansible
+  tasks:
+  
+    - name: Check if MSSQL is already present where we want
+      win_stat: path='C:\SQLEXPR\setup.exe'
+      register: sqlexpr_present
+    
+    - name: Send mssql
+      win_copy:
+        src: /data/ansible_files/SQLEXPR.zip
+        dest: c:\
+      when: not sqlexpr_present.stat.exists
+      
+    - name: Decompress MS SQL
+      raw: powershell.exe -command "Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('C:\SQLEXPR.zip','C:\'); "
+      when: not sqlexpr_present.stat.exists
+      
+    - name: Send config file
+      win_copy:
+        src: /data/ansible_files/ConfigurationFile.ini
+        dest: c:\
+        
+    - name: disable UAC
+      win_regedit:
+        data: 0
+        datatype: dword
+        key: "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System"
+        value: LocalAccountTokenFilterPolicy
+        
+    - name: execute setup with conf quietly
+      raw: 'C:\SQLEXPR\setup.exe /ACTION=INSTALL /CONFIGURATIONFILE="C:\ConfigurationFile.ini" /IAcceptSQLServerLicenseTerms=True'
+      
+    - name: enable UAC
+      win_regedit:
+        data: 1
+        datatype: dword
+        key: "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System"
+        value: LocalAccountTokenFilterPolicy
+      
