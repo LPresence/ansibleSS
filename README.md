@@ -22,6 +22,7 @@ jboss-as.yml : install a fully configurable jboss application server instance on
 jboss-mgmt-usr.yml : create a jboss management user, need to use a java class to encrypt the password                              
 jbossAnApp.yml : deploy an application on a Jboss server                                                                                          
 openshift_hosts : host file for installing openshift                                                                                  
+Jboss-asV1/2.yml : just some previous versions of jboss-as.yml                                                                                  
 
 Windows :
 
