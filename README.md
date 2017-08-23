@@ -19,4 +19,7 @@ jboss-mgmt-usr.yml : create a jboss management user, need to use a java class to
 jbossAnApp.yml : deploy an application on a Jboss server                                                                                          
 install_zabbix: install on windows a zabbix agent used for monitoring services                                                                                          
 openshift_hosts : host file for installing openshift                                                                                           
-instal.md : explain how to install Ansible and Semaphore (GUI)                                                                                          
+instal.md : explain how to install Ansible and Semaphore (GUI)                                                                                                
+disableUAC.yml : disable the User Account Control of Windows for a local account                                                                                                                                     
+justSendFile.yml : send a file from the host to the Windows                                                                                                                                                          
+MSSQLExpress.yml : install Microsoft SQL Express on windows                                                                                           
