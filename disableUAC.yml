@@ -1,0 +1,11 @@
+---
+- name: Disable UAC for local account
+  hosts: windows
+  remote_user: ansible
+  tasks: 
+    - name: DO IT
+      win_regedit:
+        data: 0 #replace by 1 to re-activate
+        datatype: dword
+        key: "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System"
+        value: LocalAccountTokenFilterPolicy
