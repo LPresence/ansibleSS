@@ -16,7 +16,9 @@ install.md : explain how to install Ansible and Semaphore (GUI)
 Linux :
 
 addServer.sh : bash script simplifying the ssh key exchange from the host and the machines                                                            
-main.yml : update and install apache2 on linux hosts using aptitude, needs the related yml from roles/tasks                                                                                        
+main.yml : update and install apache2 on linux hosts using aptitude, needs the related yml from roles/tasks      
+
+setup_tools.yml : install a list of packages with apt on the hosts                                                                                                                      
 jboss-as.yml : install a fully configurable jboss application server instance on CentOs hosts, needs jboss_mgn_user.yml                                                                                                                      
 jboss-mgmt-usr.yml : create a jboss management user, need to use a java class to encrypt the password                              
 jbossAnApp.yml : deploy an application on a Jboss server                                                                                          
