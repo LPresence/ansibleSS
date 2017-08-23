@@ -10,8 +10,8 @@ I'm trying to do something useful of ansible for my internship at Sopra Steria
 Follow my adventures here http://stage.lukaspresencia.fr
 
 ------------------------------------------------------------------------------------------------------------------------------------------- 
-
-instal.md : explain how to install Ansible and Semaphore (GUI)     
+                                                            
+instal.md : explain how to install Ansible and Semaphore (GUI)                                                                 
 
 Linux :
 
