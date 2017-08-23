@@ -1,0 +1,23 @@
+---
+- hosts: linux
+  remote_user: root #using root to instal sudo, which ansible user will use later. Need to allow root login in /etc/ssh/sshd_config
+
+  tasks:
+  - name: install common packages for all servers
+    apt:
+      update_cache=yes
+      state=latest
+      name={{item}}
+    with_items:
+    - curl
+    - htop
+    - ncdu
+    - pwgen
+    - git
+    - sudo
+    - tar
+    - unzip
+    - vim
+    - wget
+    - whois
+    - screen 
