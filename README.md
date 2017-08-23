@@ -11,7 +11,7 @@ Follow my adventures here http://stage.lukaspresencia.fr
 
 ------------------------------------------------------------------------------------------------------------------------------------------- 
                                                             
-instal.md : explain how to install Ansible and Semaphore (GUI)                                                                 
+install.md : explain how to install Ansible and Semaphore (GUI)                                                                 
 
 Linux :
 
