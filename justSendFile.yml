@@ -1,0 +1,9 @@
+---
+- name: send a file to windows server
+  hosts: windows
+  remote_user: ansible
+  tasks:
+    - name: send
+      win_copy:
+        src: /data/ansible_files/NDP47.exe
+        dest: c:\
