@@ -20,7 +20,8 @@ main.yml : update and install apache2 on linux hosts using aptitude, needs the r
 jboss-as.yml : install a fully configurable jboss application server instance on CentOs hosts, needs jboss_mgn_user.yml                                                                                                                      
 jboss-mgmt-usr.yml : create a jboss management user, need to use a java class to encrypt the password                              
 jbossAnApp.yml : deploy an application on a Jboss server                                                                                          
-openshift_hosts : host file for installing openshift                                                                                                                                                          
+openshift_hosts : host file for installing openshift                                                                                  
+
 Windows :
 
 WinRMcfg.ps1 : Windows script to configure a Windows host for remote management with Ansible                                                        
